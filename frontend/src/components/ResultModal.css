@@ -1,0 +1,121 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #1a1425;
+  color: #eee;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 560px;
+  width: 90%;
+  max-height: 85vh;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.status-placed { color: #16a34a; text-align: center; margin-bottom: 4px; }
+.status-notplaced { color: #dc2626; text-align: center; margin-bottom: 4px; }
+.status-subtitle { text-align: center; color: #aaa; margin-bottom: 24px; }
+
+.modal-body {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  background: #221b30;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.circle-wrap { flex-shrink: 0; }
+
+.prob-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prob-circle-inner {
+  width: 108px;
+  height: 108px;
+  background: #1a1425;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.prob-number { font-size: 26px; font-weight: 700; color: #fff; }
+.prob-label { font-size: 11px; color: #999; text-transform: uppercase; }
+
+.factors-panel { flex: 1; min-width: 0; }
+.factors-panel h3 { margin: 0 0 6px; font-size: 15px; }
+.panel-hint { font-size: 12px; color: #999; margin: 0 0 10px; }
+
+.factor-list-simple {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 14px;
+}
+.factor-list-simple li { margin-bottom: 6px; }
+
+.all-factors {
+  border-top: 1px solid #333;
+  padding-top: 14px;
+}
+
+.all-factors summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: #a78bfa;
+  font-weight: 600;
+}
+
+.factors { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+
+.factor-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 60px;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.factor-name { color: #ccc; }
+
+.factor-bar-bg {
+  background: #2a2a3a;
+  border-radius: 6px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.factor-bar { height: 100%; }
+.factor-bar.positive { background: #16a34a; }
+.factor-bar.negative { background: #dc2626; }
+
+.factor-value { text-align: right; }
+.positive-text { color: #4ade80; }
+.negative-text { color: #f87171; }
