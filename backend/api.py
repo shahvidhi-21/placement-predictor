@@ -21,29 +21,19 @@ def home():
     return {"message": "Placement Predictor API Running"}
 
 @app.get("/predict")
-def predict(
-    cgpa: float,
-    internships: int,
-    projects: int,
-    certifications: int,
-    aptitude: float,
-    softskills: float,
-    extracurricular: int,
-    training: int,
-    ssc: float,
-    hsc: float
-):
-    data = np.array([[cgpa, internships, projects, certifications,
-                       aptitude, softskills, extracurricular, training,
-                       ssc, hsc]])
-    proba = model.predict_proba(data)[0][1]
-    prediction = int(proba >= 0.5)
+def predict(cgpa: float, internships: int, projects: int, certifications: int,
+            aptitude: float, softskills: float, extracurricular: int,
+            training: int, ssc: float, hsc: float):
+    data = np.array([[cgpa, internships, projects, certifications, aptitude,
+                       softskills, extracurricular, training, ssc, hsc]])
+    proba_placed = model.predict_proba(data)[0][1]
+    prediction = int(proba_placed >= 0.5)
+    confidence = proba_placed if prediction == 1 else (1 - proba_placed)
     return {
-        "Placement Probability": round(float(proba), 3),
-        "Predicted Status": "Placed" if prediction == 1 else "Not Placed"
+        "placement_probability": round(float(proba_placed), 3),
+        "confidence": round(float(confidence), 3),
+        "predicted_status": "Placed" if prediction == 1 else "NotPlaced"
     }
-
-
 
 background = pickle.load(open("background.pkl", "rb"))
 feature_names = ['CGPA','Internships','Projects','Workshops/Certifications',
