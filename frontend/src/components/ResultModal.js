@@ -19,21 +19,24 @@ function ResultModal({ result, onClose }) {
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <button className="close-btn" onClick={onClose}>✕</button>
 
-        <h2 className={isPlaced ? 'status-placed' : 'status-notplaced'}>
-          {isPlaced ? 'Placed' : 'Not Placed'}
-        </h2>
-        <p className="status-subtitle">
-          {isPlaced
-            ? 'Your profile looks strong for placement.'
-            : 'Keep working hard to improve your profile.'}
-        </p>
+        <div className="modal-header">
+          <span className="status-icon">{isPlaced ? '🎉' : '📈'}</span>
+          <h2 className={isPlaced ? 'status-placed' : 'status-notplaced'}>
+            {isPlaced ? 'Congratulations! Placed' : 'Not Placed — Yet'}
+          </h2>
+          <p className="status-subtitle">
+            {isPlaced
+              ? 'Your profile looks strong for campus placement.'
+              : 'Focus on the key areas below to boost your chances.'}
+          </p>
+        </div>
 
         <div className="modal-body">
           <div className="circle-wrap">
             <div
               className="prob-circle"
               style={{
-                background: `conic-gradient(${isPlaced ? '#16a34a' : '#dc2626'} ${prediction.confidence * 360}deg, #2a2a3a 0deg)`
+                background: `conic-gradient(${isPlaced ? '#10b981' : '#ef4444'} ${prediction.confidence * 360}deg, rgba(30,20,50,0.8) 0deg)`
               }}
             >
               <div className="prob-circle-inner">
@@ -44,11 +47,11 @@ function ResultModal({ result, onClose }) {
           </div>
 
           <div className="factors-panel">
-            <h3>{isPlaced ? 'Your strong areas' : 'Areas to improve'}</h3>
+            <h3>{isPlaced ? '✅ Your strong areas' : '⚠️ Areas to improve'}</h3>
             <p className="panel-hint">
               {isPlaced
                 ? 'These factors pushed your prediction toward placement:'
-                : 'Focus on improving these key areas:'}
+                : 'Improving these key factors will raise your score:'}
             </p>
             <ul className="factor-list-simple">
               {relevantFactors.map((f) => (
@@ -61,7 +64,7 @@ function ResultModal({ result, onClose }) {
         <details className="all-factors">
           <summary>See all factor impacts (SHAP)</summary>
           <p className="panel-hint">
-            How each factor increased (+) or decreased (-) your placement chances:
+            How each factor increased (+) or decreased (−) your placement chances:
           </p>
           <div className="factors">
             {allFactors.map((f) => (
