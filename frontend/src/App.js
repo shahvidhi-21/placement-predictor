@@ -90,9 +90,11 @@ function App() {
     try {
       const params = new URLSearchParams(formData).toString();
 
+    const API = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
       const [predictRes, explainRes] = await Promise.all([
-        fetch(`http://localhost:8000/predict?${params}`),
-        fetch(`http://localhost:8000/explain?${params}`)
+        fetch(`${API}/predict?${params}`),
+        fetch(`${API}/explain?${params}`)
       ]);
 
       if (!predictRes.ok || !explainRes.ok) {
