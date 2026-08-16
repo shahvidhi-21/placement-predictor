@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+
+  # ─── Backend: FastAPI ──────────────────────────────────────────────────────
+  backend:
+    build: ./backend              # Docker will use backend/Dockerfile
+    container_name: placement-backend
+    ports:
+      - "8000:8000"               # Your machine port 8000 → container port 8000
+    restart: unless-stopped       # Auto-restart if container crashes
+
+  # ─── Frontend: React + Nginx ───────────────────────────────────────────────
+  frontend:
+    build: ./frontend             # Docker will use frontend/Dockerfile
+    container_name: placement-frontend
+    ports:
+      - "3000:80"                 # Your machine port 3000 → container's Nginx port 80
+    depends_on:
+      - backend                   # Wait for backend to start first
+    restart: unless-stopped

@@ -1,0 +1,7 @@
+__pycache__
+*.pyc
+*.pyo
+*.ipynb
+placement_data.csv
+.git
+.gitignore
