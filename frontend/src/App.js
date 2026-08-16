@@ -6,16 +6,16 @@ import ResultModal from './components/ResultModal';
 // cgpa, internships, projects, certifications, aptitude,
 // softskills, extracurricular, training, ssc, hsc
 const formFields = [
-  { name: 'cgpa', label: 'CGPA', type: 'number', step: '0.01', placeholder: 'e.g. 8.5', hint: 'Out of 10' },
-  { name: 'internships', label: 'Internships', type: 'number', step: '1', placeholder: 'e.g. 2', hint: 'Number of internships' },
-  { name: 'projects', label: 'Projects', type: 'number', step: '1', placeholder: 'e.g. 3', hint: 'Academic / personal projects' },
-  { name: 'certifications', label: 'Certifications', type: 'number', step: '1', placeholder: 'e.g. 2', hint: 'Total certifications' },
-  { name: 'aptitude', label: 'Aptitude Score', type: 'number', step: '0.1', placeholder: 'e.g. 85.5', hint: 'Score out of 100' },
-  { name: 'softskills', label: 'Soft Skills Rating', type: 'number', step: '0.1', placeholder: 'e.g. 4.2', hint: 'Rating out of 5' },
-  { name: 'extracurricular', label: 'Extracurricular Activities', type: 'number', step: '1', placeholder: '0 or 1', hint: '0 = No, 1 = Yes' },
-  { name: 'training', label: 'Placement Training', type: 'number', step: '1', placeholder: '0 or 1', hint: '0 = No, 1 = Yes' },
-  { name: 'ssc', label: 'SSC Marks (%)', type: 'number', step: '0.1', placeholder: 'e.g. 88.5', hint: '10th grade percentage' },
-  { name: 'hsc', label: 'HSC Marks (%)', type: 'number', step: '0.1', placeholder: 'e.g. 82.0', hint: '12th grade percentage' },
+  { name: 'cgpa',            label: 'CGPA',                      type: 'number', step: '0.01', placeholder: 'e.g. 8.5',  hint: 'Out of 10',              min: 0, max: 10  },
+  { name: 'internships',     label: 'Internships',               type: 'number', step: '1',    placeholder: 'e.g. 2',    hint: 'Number of internships',   min: 0           },
+  { name: 'projects',        label: 'Projects',                  type: 'number', step: '1',    placeholder: 'e.g. 3',    hint: 'Max 20 projects',         min: 0, max: 20  },
+  { name: 'certifications',  label: 'Certifications',            type: 'number', step: '1',    placeholder: 'e.g. 2',    hint: 'Total certifications',    min: 0           },
+  { name: 'aptitude',        label: 'Aptitude Score',            type: 'number', step: '0.1',  placeholder: 'e.g. 85.5', hint: 'Score out of 100',        min: 0, max: 100 },
+  { name: 'softskills',      label: 'Soft Skills Rating',        type: 'number', step: '0.1',  placeholder: 'e.g. 4.2',  hint: 'Rating out of 5',         min: 0, max: 5   },
+  { name: 'extracurricular', label: 'Extracurricular Activities',type: 'select',               placeholder: 'Select',     hint: '0 = No,  1 = Yes'                        },
+  { name: 'training',        label: 'Placement Training',        type: 'select',               placeholder: 'Select',     hint: '0 = No,  1 = Yes'                        },
+  { name: 'ssc',             label: 'SSC Marks (%)',             type: 'number', step: '0.1',  placeholder: 'e.g. 88.5', hint: '10th grade percentage',   min: 0, max: 100 },
+  { name: 'hsc',             label: 'HSC Marks (%)',             type: 'number', step: '0.1',  placeholder: 'e.g. 82.0', hint: '12th grade percentage',   min: 0, max: 100 },
 ];
 
 function App() {
@@ -27,9 +27,41 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [resultData, setResultData] = useState(null);
   const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    // Clear the error for this field as user types
+    setFieldErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const validate = () => {
+    const errors = {};
+
+    formFields.forEach((field) => {
+      const val = formData[field.name];
+      if (val === '' || val === null || val === undefined) {
+        errors[field.name] = 'This field is required.';
+        return;
+      }
+
+      if (field.type === 'select') {
+        if (val !== '0' && val !== '1') {
+          errors[field.name] = 'Please select 0 (No) or 1 (Yes).';
+        }
+        return;
+      }
+
+      const num = parseFloat(val);
+      if (isNaN(num)) { errors[field.name] = 'Must be a number.'; return; }
+      if (num < 0)    { errors[field.name] = 'Value cannot be negative.'; return; }
+      if (field.max !== undefined && num > field.max) {
+        errors[field.name] = `Maximum allowed value is ${field.max}.`;
+      }
+    });
+
+    return errors;
   };
 
   const handleReset = () => {
@@ -39,11 +71,20 @@ function App() {
     });
     setResultData(null);
     setError(null);
+    setFieldErrors({});
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    // Run validation before calling the API
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+    setFieldErrors({});
     setLoading(true);
 
     try {
@@ -96,23 +137,42 @@ function App() {
               {formFields.map((field) => (
                 <div className="form-group" key={field.name}>
                   <label className="form-label" htmlFor={field.name}>
-                    <span className="field-icon">{field.icon}</span>
                     {field.label}
                   </label>
                   <div className="input-wrapper">
-                    <input
-                      id={field.name}
-                      name={field.name}
-                      type={field.type}
-                      step={field.step}
-                      placeholder={field.placeholder}
-                      value={formData[field.name]}
-                      onChange={handleChange}
-                      className="form-input"
-                      required
-                    />
+                    {field.type === 'select' ? (
+                      <select
+                        id={field.name}
+                        name={field.name}
+                        value={formData[field.name]}
+                        onChange={handleChange}
+                        className={`form-input${fieldErrors[field.name] ? ' input-error' : ''}`}
+                        required
+                      >
+                        <option value="">Select…</option>
+                        <option value="0">0 — No</option>
+                        <option value="1">1 — Yes</option>
+                      </select>
+                    ) : (
+                      <input
+                        id={field.name}
+                        name={field.name}
+                        type={field.type}
+                        step={field.step}
+                        min={field.min}
+                        max={field.max}
+                        placeholder={field.placeholder}
+                        value={formData[field.name]}
+                        onChange={handleChange}
+                        className={`form-input${fieldErrors[field.name] ? ' input-error' : ''}`}
+                        required
+                      />
+                    )}
                   </div>
-                  <span className="input-hint">{field.hint}</span>
+                  {fieldErrors[field.name]
+                    ? <span className="field-error">{fieldErrors[field.name]}</span>
+                    : <span className="input-hint">{field.hint}</span>
+                  }
                 </div>
               ))}
             </div>
